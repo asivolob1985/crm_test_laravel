@@ -1,0 +1,35 @@
+version: '3'
+services:
+    php:
+        build: ./docker/php
+        container_name: php
+        ports:
+            - "8000:8000"
+        volumes:
+            - ./:/opt/crm_test
+            - ./docker/php/php.ini:/usr/local/etc/php/conf.d/php.ini
+        environment:
+            - "APP_NAME=crm_test"
+            - "APP_ENV=local"
+            - "APP_DEBUG=true"
+            - "APP_KEY=base64:lUu9q9bs/N7nQlj5k6xHP/0sulgS5XGLPTPqZgG6z4E="
+            - "APP_URL=http://127.0.0.1"
+        depends_on:
+            - db
+
+    db:
+        image: mysql:5.7
+        ports:
+            - "3306:3306"
+        volumes:
+            - db_crmtest:/var/lib/mysql
+        container_name: db
+        command: --default-authentication-plugin=mysql_native_password
+        environment:
+            MYSQL_DATABASE: ${DB_DATABASE}
+            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+            MYSQL_USER: ${DB_USERNAME}
+            SERVICE_NAME: mysql
+volumes:
+    db_crmtest:
